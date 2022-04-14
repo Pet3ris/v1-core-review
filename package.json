@@ -1,9 +1,15 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "prepare": "husky install",
+    "echidna": "export TERMINFO=/usr/share/terminfo && hardhat compile && echidna-test . --contract TestBond --config ./echidna.config.yaml"
+  },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.4",
-    "@nomiclabs/hardhat-etherscan": "^2.1.8",
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^4.5.0",
+    "@openzeppelin/contracts-upgradeable": "^4.5.0",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.3.0",
@@ -20,10 +26,13 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.2.0",
-    "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.3",
-    "hardhat": "^2.8.2",
+    "ethers": "^5.6.3",
+    "hardhat": "^2.9.1",
+    "hardhat-deploy": "^0.10.5",
     "hardhat-gas-reporter": "^1.0.7",
+    "hardhat-storage-layout": "^0.1.6",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.6",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.6",
@@ -31,5 +40,11 @@
     "ts-node": "^10.4.0",
     "typechain": "^5.2.0",
     "typescript": "^4.5.4"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,sol,md}": "npx prettier --write"
+  },
+  "dependencies": {
+    "@primitivefi/hardhat-dodoc": "^0.2.3"
   }
 }

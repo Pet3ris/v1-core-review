@@ -1,11 +1,18 @@
 import * as dotenv from "dotenv";
 
 import { HardhatUserConfig, task } from "hardhat/config";
-import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-waffle";
-import "@typechain/hardhat";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
+import "@typechain/hardhat"; // used to create types found in ./typechain
+import "@nomiclabs/hardhat-waffle"; // integrates waffle into the hre
+import "hardhat-gas-reporter"; // outputs gas usage by contract and method call when testing
+import "@nomiclabs/hardhat-ethers"; // integrates ethers into the hre
+import "solidity-coverage"; // adds 'coverage' task
+import "hardhat-deploy"; // runs scripts in the ./deploy folder
+import "@nomiclabs/hardhat-etherscan"; // adds 'verify' task
+import "@primitivefi/hardhat-dodoc"; // generates docs on compile
+import "hardhat-storage-layout"; // exports storage layout of contracts
+
+import "./tasks/storageLayout.ts"; // add 'storage-layout' task
+import "./tasks/rinkebyIntegration.ts"; // add 'integration' task
 
 dotenv.config();
 
@@ -23,20 +30,45 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.4",
+  solidity: "0.8.9",
+  etherscan: {
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY,
+      rinkeby: process.env.ETHERSCAN_API_KEY,
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+      1: 0,
+      4: process.env.RINKEBY_DEPLOYER_ADDRESS || "",
+    },
+  },
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+    rinkeby: {
+      live: true,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    hardhat: {
+      mining: {
+        auto: true,
+      },
+    },
   },
   gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
+    coinmarketcap: process.env.GAS_REPORTER_COINMARKETCAP_API_KEY,
   },
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+  mocha: {
+    timeout: 5000000,
+  },
+  dodoc: {
+    include: ["Bond", "BondFactory"],
+    exclude: ["TestBond"],
+    runOnCompile: true,
+    templatePath: "./template.sqrl",
   },
 };
 
